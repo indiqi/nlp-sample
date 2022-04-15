@@ -1,6 +1,6 @@
 import spacy
 import os
-from pipe import select
+from pipe import select, where
 import re
 
 
@@ -23,6 +23,19 @@ def humanise(text, corpus):
         )
     )
     return "\n\n".join(sentences)
+
+
+def remove_stop_words(text, corpus):
+    nlp = spacy.load(os.path.join(
+        os.path.dirname(__file__),
+        "vendor",
+        f"{corpus}-3.2.0")
+    )
+    stop_words = nlp.Defaults.stop_words
+    return ' '.join(list(
+        [token.lower for token in text.split()]
+        | where(lambda token: token not in stop_words)
+    ))
 
 
 if __name__ == '__main__':
